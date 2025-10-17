@@ -5,15 +5,13 @@ import {
   Text,
 } from 'react-native';
 import { DrawerToggleButton } from '@react-navigation/drawer';
-import { useRouter } from 'expo-router';
 
 import { useAuth } from '@/src/context/AuthProvider';
 import { colors } from '@/src/constants';
 
 export function Header({ page, children }: { page?:string, children?: React.ReactNode }) {
-  const { user, signOut } = useAuth();
-  const router = useRouter();
-    
+  const { user } = useAuth();
+  
   return (
     <View style={styles.header}>
         <View>
@@ -27,7 +25,7 @@ export function Header({ page, children }: { page?:string, children?: React.Reac
           {!page ? (
             <>
               <Text style={styles.hi}>Olá,</Text>
-              <Text style={styles.userName}>{ user ? user.name : 'Pig Money'}</Text>
+              <Text style={styles.userName}>{ user ? user.userName : 'Pig Money'}</Text>
             </>
           ) : (
             <Text style={styles.page}>{page}</Text>

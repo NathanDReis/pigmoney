@@ -16,8 +16,8 @@ export const SQLiteProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const initDb = async () => {
       const connection = await getDbConnection();
-      await createTables(connection);
       setDb(connection);
+      await createTables(connection);
     };
     initDb();
   }, []);
