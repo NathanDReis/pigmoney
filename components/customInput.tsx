@@ -15,6 +15,7 @@ interface CustomInputProps extends TextInputProps {
   label?: string;
   error?: string;
   isPassword?: boolean;
+  maskType?: 'phone';
 }
 
 export function CustomInput({
@@ -22,9 +23,42 @@ export function CustomInput({
   label,
   error,
   isPassword = false,
+  maskType,
+  value,
+  onChangeText,
   ...props
 }: CustomInputProps) {
   const [showPassword, setShowPassword] = useState(false);
+
+  const applyPhoneMask = (text: string) => {
+    // Remove tudo que não é número
+    const numbers = text.replace(/\D/g, '');
+    
+    // Aplica a máscara de telefone brasileiro
+    if (numbers.length <= 10) {
+      // Formato: (XX) XXXX-XXXX
+      return numbers
+        .replace(/^(\d{2})(\d)/, '($1) $2')
+        .replace(/(\d{4})(\d)/, '$1-$2');
+    } else {
+      // Formato: (XX) XXXXX-XXXX
+      return numbers
+        .replace(/^(\d{2})(\d)/, '($1) $2')
+        .replace(/(\d{5})(\d)/, '$1-$2')
+        .slice(0, 15); // Limita o tamanho máximo
+    }
+  };
+
+  const handleChangeText = (text: string) => {
+    if (!onChangeText) return;
+
+    if (maskType === 'phone') {
+      const maskedText = applyPhoneMask(text);
+      onChangeText(maskedText);
+    } else {
+      onChangeText(text);
+    }
+  };
 
   return (
     <View style={styles.wrapper}>
@@ -47,6 +81,9 @@ export function CustomInput({
           style={styles.input}
           placeholderTextColor="#999"
           secureTextEntry={isPassword && !showPassword}
+          value={value}
+          onChangeText={handleChangeText}
+          keyboardType={maskType === 'phone' ? 'phone-pad' : props.keyboardType}
           {...props}
         />
         

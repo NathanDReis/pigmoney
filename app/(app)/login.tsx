@@ -16,18 +16,20 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { UserInterface } from '@/models/user.interface';
+import { UserService } from '@/services/user.service';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+  const [email, setEmail] = useState('admin@pigmoney.com');
+  const [senha, setSenha] = useState('Teste@2025');
   const [rememberMe, setRememberMe] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
   
   // Register fields
-  const [nomeCompleto, setNomeCompleto] = useState('');
-  const [nomeUsuario, setNomeUsuario] = useState('');
-  const [confirmarSenha, setConfirmarSenha] = useState('');
+  const [nomeCompleto, setNomeCompleto] = useState('Nathan David Reis');
+  const [nomeUsuario, setNomeUsuario] = useState('Nathan');
+  const [celular, setCelular] = useState('(31) 98277-7939');
+  const [confirmarSenha, setConfirmarSenha] = useState('Teste@2025');
   
   const { signIn } = useAuth();
   const router = useRouter();
@@ -47,22 +49,34 @@ export default function Login() {
       return;
     }
     try {
-      
+      const newUser: UserInterface = {
+        password: senha,
+        userName: nomeUsuario,
+        fullName: nomeCompleto,
+        telephone: celular,
+        email: email,
+      };
+      const user = await UserService.create(newUser);
+      console.log('\x1b[2J');
+      console.log(user);
+      await signIn(email, senha);
+      router.replace('/');
     } catch (error) {
+      console.log(error);
       console.error('Erro ao registrar:', error);
     }
   };
 
   const handleGoogleLogin = () => {
-    console.log('Google login');
+    alert('Em desenvolvimento: Google login');
   };
 
   const handleFacebookLogin = () => {
-    console.log('Facebook login');
+    alert('Em desenvolvimento: Facebook login');
   };
 
   const handleForgotPassword = () => {
-    console.log('Esqueceu a senha');
+    alert('Em desenvolvimento: Esqueceu a senha');
   };
 
   const handleGoBack = () => {
@@ -172,7 +186,6 @@ export default function Login() {
           />
 
           {/* Email Input */}
-          {/* Email Input */}
           <CustomInput 
             icon="mail" 
             placeholder="Email"
@@ -189,6 +202,16 @@ export default function Login() {
             value={nomeUsuario}
             onChangeText={setNomeUsuario}
             autoCapitalize="none"
+          />
+
+          {/* Celular Input */}
+          <CustomInput 
+            icon="phone" 
+            placeholder="Celular"
+            value={celular}
+            onChangeText={setCelular}
+            autoCapitalize="none"
+            maskType='phone'
           />
 
           {/* Criar Senha Input */}
